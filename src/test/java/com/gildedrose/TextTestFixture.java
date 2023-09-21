@@ -1,5 +1,7 @@
 package com.gildedrose;
 
+import java.util.List;
+
 public class TextTestFixture {
 
     public static void main(String[] args) {
@@ -17,7 +19,7 @@ public class TextTestFixture {
             // this conjured item does not work properly yet
             new Item("Conjured Mana Cake", 3, 6)};
 
-        GildedRose app = new GildedRose(items);
+        GildedRose app = new GildedRose(List.of(items));
 
         int days = 2;
         if (args.length > 0) {

@@ -3,18 +3,17 @@ package com.gildedrose;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GildedRoseTest {
 
     @Test
     @DisplayName("The items degrade correctly after one day")
     void testDegrade() {
-        Item[] items = provideItems();
+        List<Item> items = provideItems();
 
         new GildedRose(items).updateQuality();
 
@@ -37,7 +36,7 @@ class GildedRoseTest {
     @Test
     @DisplayName("The items degrade correctly after two days")
     void testDegradeDay2() {
-        Item[] items = provideItems();
+        List<Item> items = provideItems();
 
         GildedRose app = new GildedRose(items);
         app.updateQuality();
@@ -59,15 +58,15 @@ class GildedRoseTest {
         assertThat(formattedItems).isEqualTo(expectedResult);
     }
 
-    private static String format(Item[] items) {
-        String result = Arrays.stream(items)
+    private static String format(List<Item> items) {
+        String result = items.stream()
             .map(Item::toString)
             .collect(Collectors.joining("\n"));
         return result + "\n";
     }
 
-    private static Item[] provideItems() {
-        return new Item[]{
+    private static List<Item> provideItems() {
+        return List.of(
             new Item("+5 Dexterity Vest", 10, 20),
             new Item("Aged Brie", 2, 0),
             new Item("Elixir of the Mongoose", 5, 7),
@@ -77,7 +76,8 @@ class GildedRoseTest {
             new Item("Backstage passes to a TAFKAL80ETC concert", 10, 49),
             new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49),
             // this conjured item does not work properly yet
-            new Item("Conjured Mana Cake", 3, 6)};
+            new Item("Conjured Mana Cake", 3, 6)
+        );
     }
 
 }

@@ -2,13 +2,15 @@ package com.gildedrose;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 class GildedRose {
 
     private final List<Item> items;
 
-    public GildedRose(Item[] items) {
-        this.items = List.of(items);
+    public GildedRose(List<Item> items) {
+        Objects.requireNonNull(items, "items are missing");
+        this.items = items;
     }
 
     public void updateQuality() {
