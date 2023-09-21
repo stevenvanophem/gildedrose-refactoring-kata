@@ -6,17 +6,24 @@ import java.util.Objects;
 
 class GildedRose {
 
-    private final List<Item> items;
+    private final List<Item> items = new ArrayList<>();
 
-    public GildedRose(List<Item> items) {
-        Objects.requireNonNull(items, "items are missing");
-        this.items = items;
+    public GildedRose addItem(Item item) {
+        Objects.requireNonNull(item, "item is missing");
+        if (this.items.contains(item))
+            throw new IllegalArgumentException("item already exists");
+        this.items.add(item);
+        return this;
+    }
+
+    public void clearItems() {
+        this.items.clear();
     }
 
     public void updateQuality() {
         for (Item item : items) {
             if (!item.name.equals("Aged Brie")
-                    && !item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+                && !item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
                 if (item.quality > 0) {
                     if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
                         item.quality = item.quality - 1;

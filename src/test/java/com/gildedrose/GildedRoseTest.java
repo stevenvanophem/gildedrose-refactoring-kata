@@ -1,5 +1,6 @@
 package com.gildedrose;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,12 +11,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GildedRoseTest {
 
+    private final GildedRose app = new GildedRose();
+
+    @AfterEach
+    void tearDown() {
+        app.clearItems();
+    }
+
+    @Test
+    @DisplayName("I can add items to the GildedRose")
+    void testAddItems() {
+        provideItems().forEach(app::addItem);
+    }
+
     @Test
     @DisplayName("The items degrade correctly after one day")
     void testDegrade() {
         List<Item> items = provideItems();
+        items.forEach(app::addItem);
 
-        new GildedRose(items).updateQuality();
+        app.updateQuality();
 
         final String formattedItems = format(items);
         final String expectedResult = """
@@ -37,8 +52,8 @@ class GildedRoseTest {
     @DisplayName("The items degrade correctly after two days")
     void testDegradeDay2() {
         List<Item> items = provideItems();
+        items.forEach(app::addItem);
 
-        GildedRose app = new GildedRose(items);
         app.updateQuality();
         app.updateQuality();
 

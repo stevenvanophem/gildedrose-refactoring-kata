@@ -19,7 +19,9 @@ public class TextTestFixture {
             // this conjured item does not work properly yet
             new Item("Conjured Mana Cake", 3, 6)};
 
-        GildedRose app = new GildedRose(List.of(items));
+        List<Item> itemList = List.of(items);
+        GildedRose app = new GildedRose();
+        itemList.forEach(app::addItem);
 
         int days = 2;
         if (args.length > 0) {
