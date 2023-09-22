@@ -10,6 +10,10 @@ public record Item(Name name, SellDate sellDate, Quality quality) {
         Objects.requireNonNull(quality, "item quality is missing");
     }
 
+    public static Item of(Name name, SellDate sellDate, Quality quality) {
+        return new Item(name, sellDate, quality);
+    }
+
     @Override
     public String toString() {
         return this.name.value() + ", " + this.sellDate.value() + ", " + this.quality.value();
@@ -107,10 +111,6 @@ public record Item(Name name, SellDate sellDate, Quality quality) {
                 throw new IllegalArgumentException("Quality cannot be greater than 50");
         }
 
-        public static Quality of(int value) {
-            return new Quality(value);
-        }
-
         public static Quality mostValuable() {
             return new Quality(50);
         }
@@ -119,50 +119,41 @@ public record Item(Name name, SellDate sellDate, Quality quality) {
             return new Quality(0);
         }
 
-        public boolean isWorthless() {
-            return value == 0;
-        }
-
-        public boolean isLegendary() {
-            return value == 80;
-        }
-
         public Quality degrade() {
-            int nextValue = value - 1;
-            if (nextValue >= 0) {
-                return new Quality(nextValue);
-            }
-            return Quality.worthless();
+            final int number = value - 1;
+            return this.degrade(number);
         }
 
         public Quality degradeTwiceAsFast() {
-            int nextValue = value - 2;
-            if (nextValue >= 0) {
-                return new Quality(nextValue);
+            final int number = value - 2;
+            return this.degrade(number);
+        }
+
+        private Quality degrade(int number) {
+            if (number >= 0) {
+                return new Quality(number);
             }
             return Quality.worthless();
         }
 
         public Quality increase() {
-            int nextValue = value + 1;
-            if (nextValue <= 50) {
-                return new Quality(nextValue);
-            }
-            return Quality.mostValuable();
+            final int nextValue = value + 1;
+            return this.increase(nextValue);
         }
 
         public Quality increaseTwiceAsFast() {
-            int nextValue = value + 2;
-            if (nextValue <= 50) {
-                return new Quality(nextValue);
-            }
-            return Quality.mostValuable();
+            final int nextValue = value + 2;
+            return this.increase(nextValue);
         }
 
         public Quality increaseThreeTimesAsFast() {
-            int nextValue = value + 3;
-            if (nextValue <= 50) {
-                return new Quality(nextValue);
+            final int number = value + 3;
+            return increase(number);
+        }
+
+        private Quality increase(int number) {
+            if (number <= 50) {
+                return new Quality(number);
             }
             return Quality.mostValuable();
         }
