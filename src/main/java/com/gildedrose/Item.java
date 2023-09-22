@@ -27,33 +27,33 @@ public record Item(Name name, SellDate sellDate, Quality quality) {
 
         if (name.isAgedBrie()) {
             final Quality increasedQuality = quality.increase();
-            return new Item(name, degradedSellDate, increasedQuality);
+            return Item.of(name, degradedSellDate, increasedQuality);
         }
 
         if (name.isBackstagePasses()) {
             if (degradedSellDate.fiveDaysOrLess()) {
                 final Quality trippledQuality = quality.increaseThreeTimesAsFast();
-                return new Item(name, degradedSellDate, trippledQuality);
+                return Item.of(name, degradedSellDate, trippledQuality);
             }
             if (degradedSellDate.tenDaysOrLess()) {
                 final Quality doubleIncreasedQuality = quality.increaseTwiceAsFast();
-                return new Item(name, degradedSellDate, doubleIncreasedQuality);
+                return Item.of(name, degradedSellDate, doubleIncreasedQuality);
             }
             if (degradedSellDate.isExpired()) {
                 final Quality worthlessQuality = Quality.worthless();
-                return new Item(name, degradedSellDate, worthlessQuality);
+                return Item.of(name, degradedSellDate, worthlessQuality);
             }
             final Quality increasedQuality = quality.increase();
-            return new Item(name, degradedSellDate, increasedQuality);
+            return Item.of(name, degradedSellDate, increasedQuality);
         }
 
         if (degradedSellDate.isExpired()) {
             final Quality doubleDegradedQuality = quality.degradeTwiceAsFast();
-            return new Item(name, degradedSellDate, doubleDegradedQuality);
+            return Item.of(name, degradedSellDate, doubleDegradedQuality);
         }
 
         final Quality degradedQuality = quality.degrade();
-        return new Item(name, degradedSellDate, degradedQuality);
+        return Item.of(name, degradedSellDate, degradedQuality);
     }
 
     public record Name(String value) {
