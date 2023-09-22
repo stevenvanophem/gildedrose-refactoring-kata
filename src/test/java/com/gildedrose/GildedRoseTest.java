@@ -5,9 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,48 +26,49 @@ class GildedRoseTest {
     @Test
     @DisplayName("I can add items to the GildedRose")
     void testAddItems() {
-        provideItems().forEach(app::addItem);
+        ItemTestFactory.allItems().forEach(app::addItem);
     }
 
     @ParameterizedTest(name = "Day {1} expected sellIn: {2} and quality: {3}")
     @MethodSource
     @DisplayName("Once the sell by date has passed, Quality degrades twice as fast")
-    void testRule1(TestItem testItem, int days, int sellIn, int quality) {
-        final Item item = testItem.toItem();
-
+    void testRule1(Item item, int days, int sellIn, int quality) {
         app.addItem(item);
         IntStream.range(0, days).forEach(day -> app.updateQuality());
 
-        assertThat(item.toString()).isEqualTo(item.name + ", " + sellIn + ", " + quality);
+        assertThat(app.items().toString()).isEqualTo("[" + item.name().value() + ", " + sellIn + ", " + quality + "]");
     }
 
     private static Stream<Arguments> testRule1() {
-        final TestItem cookies = new TestItem("Cookies", 5, 10);
+        final var name = Item.Name.fromString("Cookies");
+        final var sellDate = new Item.SellDate(5);
+        final var quality = new Item.Quality(10);
+        final var item = new Item(name, sellDate, quality);
         return Stream.of(
-            Arguments.of(cookies, 0, 5, 10),
-            Arguments.of(cookies, 1, 4, 9),
-            Arguments.of(cookies, 2, 3, 8),
-            Arguments.of(cookies, 3, 2, 7),
-            Arguments.of(cookies, 4, 1, 6),
-            Arguments.of(cookies, 5, 0, 5),
-            Arguments.of(cookies, 6, -1, 3),
-            Arguments.of(cookies, 7, -2, 1),
-            Arguments.of(cookies, 8, -3, 0),
-            Arguments.of(cookies, 9, -4, 0),
-            Arguments.of(cookies, 10, -5, 0),
-            Arguments.of(cookies, 11, -6, 0)
+            Arguments.of(item, 0, 5, 10),
+            Arguments.of(item, 1, 4, 9),
+            Arguments.of(item, 2, 3, 8),
+            Arguments.of(item, 3, 2, 7),
+            Arguments.of(item, 4, 1, 6),
+            Arguments.of(item, 5, 0, 5),
+            Arguments.of(item, 6, -1, 3),
+            Arguments.of(item, 7, -2, 1),
+            Arguments.of(item, 8, -3, 0),
+            Arguments.of(item, 9, -4, 0),
+            Arguments.of(item, 10, -5, 0),
+            Arguments.of(item, 11, -6, 0)
         );
     }
 
     @Test
     @DisplayName("The items degrade correctly after one day")
     void testDegrade() {
-        List<Item> items = provideItems();
+        List<Item> items = ItemTestFactory.allItems();
         items.forEach(app::addItem);
 
         app.updateQuality();
 
-        final String formattedItems = format(items);
+        final String formattedItems = format(app.items());
         final String expectedResult = """
             +5 Dexterity Vest, 9, 19
             Aged Brie, 1, 1
@@ -88,13 +87,13 @@ class GildedRoseTest {
     @Test
     @DisplayName("The items degrade correctly after two days")
     void testDegradeDay2() {
-        List<Item> items = provideItems();
+        List<Item> items = ItemTestFactory.allItems();
         items.forEach(app::addItem);
 
         app.updateQuality();
         app.updateQuality();
 
-        final String formattedItems = format(items);
+        final String formattedItems = format(app.items());
         final String expectedResult = """
             +5 Dexterity Vest, 8, 18
             Aged Brie, 0, 2
@@ -115,29 +114,6 @@ class GildedRoseTest {
             .map(Item::toString)
             .collect(Collectors.joining("\n"));
         return result + "\n";
-    }
-
-    private static List<Item> provideItems() {
-        return List.of(
-            new Item("+5 Dexterity Vest", 10, 20),
-            new Item("Aged Brie", 2, 0),
-            new Item("Elixir of the Mongoose", 5, 7),
-            new Item("Sulfuras, Hand of Ragnaros", 0, 80),
-            new Item("Sulfuras, Hand of Ragnaros", -1, 80),
-            new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-            new Item("Backstage passes to a TAFKAL80ETC concert", 10, 49),
-            new Item("Backstage passes to a TAFKAL80ETC concert", 5, 49),
-            // this conjured item does not work properly yet
-            new Item("Conjured Mana Cake", 3, 6)
-        );
-    }
-
-    record TestItem(String name, int sellIn, int quality) {
-
-        public Item toItem() {
-            return new Item(name, sellIn, quality);
-        }
-
     }
 
 }
