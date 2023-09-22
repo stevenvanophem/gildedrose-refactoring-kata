@@ -68,7 +68,6 @@ public class ItemTestFactory {
 
     public static class BackstagePasses {
 
-        public static final Item.Quality QUALITY = new Item.Quality(20);
         public static final Item.Name NAME = new Item.Name("Backstage passes to a TAFKAL80ETC concert");
 
     }

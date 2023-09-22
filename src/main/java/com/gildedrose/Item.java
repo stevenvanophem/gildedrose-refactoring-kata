@@ -47,7 +47,7 @@ public record Item(Name name, SellDate sellDate, Quality quality) {
             return Item.of(name, degradedSellDate, increasedQuality);
         }
 
-        if (degradedSellDate.isExpired()) {
+        if (degradedSellDate.isExpired() || name.isConjured()) {
             final Quality doubleDegradedQuality = quality.degradeTwiceAsFast();
             return Item.of(name, degradedSellDate, doubleDegradedQuality);
         }
@@ -78,6 +78,10 @@ public record Item(Name name, SellDate sellDate, Quality quality) {
 
         public boolean isBackstagePasses() {
             return value.equals("Backstage passes to a TAFKAL80ETC concert");
+        }
+
+        public boolean isConjured() {
+            return value.equals("Conjured Mana Cake");
         }
 
     }
