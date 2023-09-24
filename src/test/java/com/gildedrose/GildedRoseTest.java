@@ -12,7 +12,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GildedRoseTest {
 
@@ -23,12 +25,6 @@ class GildedRoseTest {
         app.clearItems();
     }
 
-    @Test
-    @DisplayName("I can add items to the GildedRose")
-    void testAddItems() {
-        ItemTestFactory.allItems().forEach(app::addItem);
-    }
-
     @ParameterizedTest(name = "Day {1} expected sellIn: {2} and quality: {3}")
     @MethodSource
     @DisplayName("Once the sell by date has passed, Quality degrades twice as fast")
@@ -37,6 +33,34 @@ class GildedRoseTest {
         IntStream.range(0, days).forEach(day -> app.updateQuality());
 
         assertThat(app.items().toString()).isEqualTo("[" + item.name().value() + ", " + sellIn + ", " + quality + "]");
+    }
+
+    @Test
+    @DisplayName("The Quality of an item is never negative")
+    void testRule2() {
+        Item item = Item.of(
+            Item.Name.fromString("Cookies"),
+            new Item.SellDate(1),
+            new Item.Quality(1)
+        );
+
+        Item result = app.addItem(item)
+            .updateQuality()
+            .updateQuality()
+            .items()
+            .getFirst();
+
+        assertThat(result.name()).isEqualTo(item.name());
+        assertThat(result.sellDate()).isEqualTo(new Item.SellDate(-1));
+        assertThat(result.quality()).isEqualTo(Item.Quality.worthless());
+    }
+
+    @Test
+    @DisplayName("The quality can never be negative")
+    void testRule2_ValueObject() {
+        assertThatThrownBy(() -> new Item.Quality(-1))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Quality cannot be negative");
     }
 
     private static Stream<Arguments> testRule1() {
